@@ -1,0 +1,52 @@
+---
+title: "MP_SRF_16S_phylo"
+author: "lrubinat"
+date: "29/04/2016"
+output:
+  html_document:
+    theme: united
+    toc: yes
+  pdf_document:
+    highlight: zenburn
+    toc: yes
+---
+
+<!--- INITIALIZATION
+```{r, echo=FALSE}
+#error hook to kill knitr in case of errors
+library(knitr)
+knit_hooks$set(error = function(x, options) stop(x))
+opts_chunk$set(cache=TRUE, autodep=TRUE)
+```
+--->
+
+# 1) Tree construction
+
+```  {r load_data, echo=FALSE, message=FALSE}
+
+library(picante)
+
+setwd("/home/laura/Documents/TFM/genwork/data_analysis/MP_16S_SRF_amplicons/MP_SRF_16S_phylo/")
+
+tb16S_otutb<-read.table("/home/laura/Documents/TFM/home/data/MALASPINA/Malaspina_16S_Surface/Phylogenies/corresponding_otutb/A_16S_FASTA_nomitoch.filter_nodot_filtered.filter-v2_nodot.trimal.OTUtb.txt", header = T, sep="\t")
+
+dim(tb16S_otutb)
+tb16S_otutb[1:5,1:5]
+
+row.names(tb16S_otutb)<-tb16S_otutb[,1]
+tb16S_otutb<-tb16S_otutb[,-1]
+
+tb16S_tree<-read.tree(file="/home/laura/Documents/TFM/home/data/MALASPINA/Malaspina_16S_Surface/Phylogenies/A_16S_FASTA_nomitoch.filter_nodot_filtered.filter-v2_nodot.trimal.fasta.phylip.tree")
+
+tb16S_tree_pruned<-prune.sample(t(tb16S_otutb), tb16S_tree)
+
+str(tb16S_tree)
+
+tb16S_tree_pruned_rooted<-root(tb16S_tree_pruned, "OTU_184",resolve.root=T)
+
+is.rooted(tb16S_tree_pruned_rooted)
+
+tree16S_pd<-pd(t(tb16S_otutb), tb16S_tree_pruned_rooted, include.root=TRUE) 
+```
+
+
